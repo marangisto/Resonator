@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP PCM3060
+D 24-BIT, 96/192-kHz ASYNCHRONOUS STEREO AUDIO CODEC
+K ADC DAC CODEC
+F https://www.ti.com/lit/gpn/pcm3060
+$ENDCMP
+#
+#End Doc Library

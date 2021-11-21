@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name PCM3060)(type Legacy)(uri ${KIPRJMOD}/PCM3060.lib)(options "")(descr ""))
+)
