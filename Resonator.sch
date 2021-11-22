@@ -14,43 +14,31 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L PCM3060:PCM3060 U1
-U 1 1 619A1A69
-P 5250 3000
-F 0 "U1" H 5200 3825 50  0000 C CNN
-F 1 "PCM3060" H 5200 3734 50  0000 C CNN
-F 2 "Package_SO:TSSOP-28_4.4x9.7mm_P0.65mm" H 5250 3000 50  0001 C CNN
-F 3 "https://www.ti.com/lit/gpn/pcm3060" H 5250 3000 50  0001 C CNN
-F 4 "Texas Instruments" H 5250 3000 50  0001 C CNN "Manufacturer"
-	1    5250 3000
-	1    0    0    -1  
-$EndComp
-$Comp
 L power:+3V3 #PWR01
 U 1 1 619A5D1A
-P 4050 2250
-F 0 "#PWR01" H 4050 2100 50  0001 C CNN
-F 1 "+3V3" H 4065 2423 50  0000 C CNN
-F 2 "" H 4050 2250 50  0001 C CNN
-F 3 "" H 4050 2250 50  0001 C CNN
-	1    4050 2250
+P 3850 1950
+F 0 "#PWR01" H 3850 1800 50  0001 C CNN
+F 1 "+3V3" H 3865 2123 50  0000 C CNN
+F 2 "" H 3850 1950 50  0001 C CNN
+F 3 "" H 3850 1950 50  0001 C CNN
+	1    3850 1950
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	4050 2250 4050 3000
+	3850 1950 3850 3000
 $Comp
 L power:+5V #PWR03
 U 1 1 619A9317
-P 6350 2250
-F 0 "#PWR03" H 6350 2100 50  0001 C CNN
-F 1 "+5V" H 6365 2423 50  0000 C CNN
-F 2 "" H 6350 2250 50  0001 C CNN
-F 3 "" H 6350 2250 50  0001 C CNN
-	1    6350 2250
+P 6500 1950
+F 0 "#PWR03" H 6500 1800 50  0001 C CNN
+F 1 "+5V" H 6515 2123 50  0000 C CNN
+F 2 "" H 6500 1950 50  0001 C CNN
+F 3 "" H 6500 1950 50  0001 C CNN
+	1    6500 1950
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	6350 2250 6350 2800
+	6500 1950 6500 2800
 $Comp
 L power:GND #PWR02
 U 1 1 619AC815
@@ -239,15 +227,13 @@ F 3 "" H 7500 5250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	4050 3000 4450 3000
-Wire Wire Line
 	4050 3100 4450 3100
 Wire Wire Line
 	5950 2600 6650 2600
 Wire Wire Line
 	5950 2700 6750 2700
 Wire Wire Line
-	5950 2800 6350 2800
+	5950 2800 6500 2800
 Wire Wire Line
 	5950 2900 6350 2900
 Wire Wire Line
@@ -256,4 +242,69 @@ Wire Wire Line
 	5950 3100 6650 3100
 Wire Wire Line
 	5950 3600 6350 3600
+Text GLabel 5950 3700 2    50   Input ~ 0
+PA3
+Text GLabel 4450 2600 0    50   Input ~ 0
+PA11
+Text GLabel 4450 2700 0    50   Input ~ 0
+PF0
+Text GLabel 4450 2800 0    50   Input ~ 0
+PF1
+Text GLabel 4450 2900 0    50   Input ~ 0
+PA8
+Text GLabel 4450 3200 0    50   Input ~ 0
+PA9
+Text GLabel 4450 3300 0    50   Input ~ 0
+PB3
+Text GLabel 4450 3400 0    50   Input ~ 0
+PA4
+Text GLabel 4450 3500 0    50   Input ~ 0
+PB5
+$Comp
+L PCM3060:PCM3060 U1
+U 1 1 619C61BC
+P 5250 3000
+F 0 "U1" H 5200 3825 50  0000 C CNN
+F 1 "PCM3060" H 5200 3734 50  0000 C CNN
+F 2 "Package_SO:TSSOP-28_4.4x9.7mm_P0.65mm" H 5250 3000 50  0001 C CNN
+F 3 "https://www.ti.com/lit/gpn/pcm3060" H 5250 3000 50  0001 C CNN
+F 4 "Texas Instruments" H 5250 3000 50  0001 C CNN "Manufacturer"
+	1    5250 3000
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6350 2400 6350 2500
+Connection ~ 6350 2900
+Wire Wire Line
+	5950 2500 6350 2500
+Connection ~ 6350 2500
+Wire Wire Line
+	6350 2500 6350 2900
+$Comp
+L Device:R R1
+U 1 1 619D3A1C
+P 6150 2400
+F 0 "R1" V 5943 2400 50  0000 C CNN
+F 1 "220k" V 6034 2400 50  0000 C CNN
+F 2 "" V 6080 2400 50  0001 C CNN
+F 3 "~" H 6150 2400 50  0001 C CNN
+	1    6150 2400
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5950 2400 6000 2400
+Wire Wire Line
+	6300 2400 6350 2400
+Wire Wire Line
+	3850 3000 4450 3000
+Wire Wire Line
+	4450 2500 4050 2500
+Wire Wire Line
+	4050 2500 4050 3100
+Connection ~ 4050 3100
+Wire Wire Line
+	4050 2500 4050 2400
+Wire Wire Line
+	4050 2400 4450 2400
+Connection ~ 4050 2500
 $EndSCHEMATC
