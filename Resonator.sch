@@ -243,7 +243,7 @@ Wire Wire Line
 Wire Wire Line
 	5950 3600 6350 3600
 Text GLabel 5950 3700 2    50   Input ~ 0
-PA3
+PA0
 Text GLabel 4450 2600 0    50   Input ~ 0
 PA11
 Text GLabel 4450 2700 0    50   Input ~ 0
