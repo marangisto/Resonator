@@ -1,0 +1,2 @@
+MCU=STM32G431KBTx
+BASE_DIR=../../..
