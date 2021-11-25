@@ -1,43 +1,120 @@
 #include "board.h"
+#include <i2s.h>
+#include <dma.h>
+#include <fixed.h>
+#include <cstring>
+#include <textio.h>
+#include <usart.h>
+#include <adc.h>
 
-using p0 = output_t<PA9>;   // I2S3_MCK
-using p1 = output_t<PF0>;   // I2S2_WS
-using p2 = output_t<PF1>;   // I2S2_CK
-using p3 = output_t<PA8>;   // I2S2_MCK
-using p4 = output_t<PA11>;  // I2S2_SD
-using p5 = output_t<PB5>;   // I2S3_SD
-using p6 = output_t<PB3>;   // I2S3_CK
-using p7 = output_t<PA0>;   // RST
-using p8 = output_t<PA4>;   // I2S3_WS
+using namespace fixed;
+
+using led = output_t<LED>;
+using probe = output_t<PA7>;
+using reset = output_t<PB4>;
+using adc = adc_t<1>;
+using a0 = analog_t<A0>;
+using a1 = analog_t<A1>;
+using serial = usart_t<SERIAL_USART, SERIAL_TX, SERIAL_RX>;
+using in_i2s = i2s_t<2, master_receiver, PF1, PA11, PF0, PA8>;
+using out_i2s = i2s_t<3, master_transmitter, PB3, PB5, PA4, PA9>;
+using dma = dma_t<1>;
+
+static const unsigned in_dma_ch = 1;
+static const unsigned out_dma_ch = 2;
+static const uint16_t half_samples = 64;                // half number of samples
+static const uint16_t n_samples = half_samples << 1;    // number of samples
+static const unsigned buf_size = n_samples << 1;        // we have two channels
+static int32_t in_buf[buf_size], out_buf[buf_size];     // i/o sample buffers
+static volatile bool target_upper_half = false;         // where to write output
+static volatile q31_t lVolume(.0), rVolume(.0);         // volume controls
+
+static inline uint32_t swap(uint32_t x)
+{
+    return (x >> 16) | (x << 16);
+}
+
+template<> void handler<SERIAL_ISR>()
+{
+    serial::isr();
+}
+
+template<> void handler<interrupt::DMA1_CH1>()
+{
+    probe::set();
+
+    auto sts = dma::interrupt_status<in_dma_ch>();
+    dma::clear_interrupt_flags<in_dma_ch>();
+
+    if (sts & (dma_half_transfer | dma_transfer_complete))
+    {
+        int32_t *src = in_buf + (sts & dma_transfer_complete ? n_samples : 0);
+        int32_t *dst = out_buf + (target_upper_half ? n_samples : 0);
+
+        for (uint16_t i = 0; i < half_samples; ++i)
+        {
+            q31_t l(static_cast<int32_t>(swap(*src++)));
+            q31_t r(static_cast<int32_t>(swap(*src++)));
+
+            *dst++ = swap((l * lVolume).q);
+            *dst++ = swap((r * rVolume).q);
+        }
+    }
+
+    probe::clear();
+}
+
+template<> void handler<interrupt::DMA1_CH2>()
+{
+    auto sts = dma::interrupt_status<out_dma_ch>();
+    dma::clear_interrupt_flags<out_dma_ch>();
+
+    if (sts & (dma_half_transfer | dma_transfer_complete))
+        target_upper_half = sts & dma_transfer_complete;
+}
 
 int main()
 {
-    using led = output_t<LED>;
-
     led::setup();
+    probe::setup();
+    reset::setup();
+    reset::set();       // active low
 
-    p0::setup();
-    p1::setup();
-    p2::setup();
-    p3::setup();
-    p4::setup();
-    p5::setup();
-    p6::setup();
-    p7::setup();
-    p8::setup();
+    a0::setup();
+    a1::setup();
+    adc::setup();
+    adc::enable();
 
-    for (uint32_t i = 0;; ++i)
+    serial::setup<230400>();
+    interrupt::set<SERIAL_ISR>();
+    interrupt::enable();
+
+    printf<serial>("Welcome to I2S!\n");
+    printf<serial>("sys-clock = %d\n", sys_clock::freq());
+
+    dma::setup();
+
+    in_i2s::setup<philips_i2s, low_level, format_32_32, 17>();
+    in_i2s::enable_dma<dma, in_dma_ch>(reinterpret_cast<uint16_t*>(in_buf), buf_size << 1);
+    dma::enable_interrupt<in_dma_ch, true>();
+    interrupt::set<interrupt::DMA1_CH1>();
+
+    out_i2s::setup<philips_i2s, low_level, format_32_32, 17>();
+    out_i2s::enable_dma<dma, out_dma_ch>(reinterpret_cast<uint16_t*>(out_buf), buf_size << 1);
+    dma::enable_interrupt<out_dma_ch, true>();
+    interrupt::set<interrupt::DMA1_CH2>();
+
+    for (;;)
     {
-        led::write(i & (1 << 20));
-        p0::write(i & (1 << 10));
-        p1::write(i & (1 << 11));
-        p2::write(i & (1 << 12));
-        p3::write(i & (1 << 13));
-        p4::write(i & (1 << 14));
-        p5::write(i & (1 << 15));
-        p6::write(i & (1 << 16));
-        p7::write(i & (1 << 17));
-        p8::write(i & (1 << 18));
+        float x0 = (1. / 4096.) * adc::read<a0>();
+        float x1 = (1. / 4096.) * adc::read<a1>();
+
+        lVolume = q31_t(x0);
+        rVolume = q31_t(x1);
+
+        printf<serial>("%0.2f %40.2f\n", x0, x1);
+        led::toggle();
+        sys_tick::delay_ms(250);
     }
 }
 
