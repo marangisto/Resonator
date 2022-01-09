@@ -1,4 +1,6 @@
 (sym_lib_table
   (lib (name PCM3060)(type Legacy)(uri ${KIPRJMOD}/PCM3060.lib)(options "")(descr ""))
   (lib (name LD2981)(type Legacy)(uri ${KIPRJMOD}/LD2981.lib)(options "")(descr ""))
+  (lib (name IPS240x240)(type Legacy)(uri ${KIPRJMOD}/IPS240x240.lib)(options "")(descr ""))
+  (lib (name SW_PUSH_LED)(type Legacy)(uri ${KIPRJMOD}/SW_PUSH_LED.lib)(options "")(descr ""))
 )
