@@ -3,4 +3,5 @@
   (lib (name LD2981)(type Legacy)(uri ${KIPRJMOD}/LD2981.lib)(options "")(descr ""))
   (lib (name IPS240x240)(type Legacy)(uri ${KIPRJMOD}/IPS240x240.lib)(options "")(descr ""))
   (lib (name SW_PUSH_LED)(type Legacy)(uri ${KIPRJMOD}/SW_PUSH_LED.lib)(options "")(descr ""))
+  (lib (name MCU_ST_STM32H7)(type Legacy)(uri ${KIPRJMOD}/MCU_ST_STM32H7.lib)(options "")(descr ""))
 )
